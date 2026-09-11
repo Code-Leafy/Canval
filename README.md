@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/preview-3.jpg" alt="Canval" width="100%">
+
 # Canval
 
 A sleek **desktop canvas** for running real PTY-backed CLI terminals side-by-side with notes and agent workflows — on a calm, infinite canvas for Windows.
