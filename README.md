@@ -6,10 +6,10 @@
 
 A sleek **desktop canvas** for running real PTY-backed CLI terminals side-by-side with notes and agent workflows — on a calm, infinite canvas for Windows.
 
-[![License](https://img.shields.io/github/license/Code-Leafy/Canvas?style=flat-square&color=2DC94E)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/Code-Leafy/Canvas?style=flat-square&color=2DC94E)](https://github.com/Code-Leafy/Canvas/stargazers)
-[![Release](https://img.shields.io/github/v/release/Code-Leafy/Canvas?style=flat-square&color=2DC94E)](https://github.com/Code-Leafy/Canvas/releases)
-[![Platform](https://img.shields.io/badge/Windows-0078D4?style=flat-square&logo=windows&logoColor=white)](https://github.com/Code-Leafy/Canvas/releases)
+[![License](https://img.shields.io/github/license/Code-Leafy/Canval?style=flat-square&color=2DC94E)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/Code-Leafy/Canval?style=flat-square&color=2DC94E)](https://github.com/Code-Leafy/Canval/stargazers)
+[![Release](https://img.shields.io/github/v/release/Code-Leafy/Canval?style=flat-square&color=2DC94E)](https://github.com/Code-Leafy/Canval/releases)
+[![Platform](https://img.shields.io/badge/Windows-0078D4?style=flat-square&logo=windows&logoColor=white)](https://github.com/Code-Leafy/Canval/releases)
 [![Electron](https://img.shields.io/badge/Electron-47848F?style=flat-square&logo=electron&logoColor=white)](https://electronjs.org)
 
 </div>
@@ -86,7 +86,7 @@ Each canvas keeps its working folder, camera, cards, and wires in `%APPDATA%`-ad
 
 *No build required.*
 
-1. Open [Code-Leafy/Canvas/releases](https://github.com/Code-Leafy/Canvas/releases) and download the latest `Canval-Setup-<version>.exe`.
+1. Open [Code-Leafy/Canval/releases](https://github.com/Code-Leafy/Canval/releases) and download the latest `Canval-Setup-<version>.exe`.
 2. Run the installer (per-user, no admin needed) and launch **Canval** from the Start Menu or desktop shortcut.
 3. Click **New Canvas**, pick a working folder, and your first PowerShell terminal spawns automatically.
 
@@ -98,7 +98,7 @@ Requires Node.js 20+ and Windows build tools (for `node-pty`).
 
 ```bash
 # Clone and install
-git clone https://github.com/Code-Leafy/Canvas.git
+git clone https://github.com/Code-Leafy/Canval.git
 cd Canvas
 npm install
 
@@ -230,6 +230,6 @@ It is a local-first desktop tool: review the installer source, keep your CLIs up
 
 > **Educational Purpose Only:** This project is provided for educational and research purposes. Users are solely responsible for compliance with all local laws. The developer assumes no liability for misuse.
 
-[MIT License](https://github.com/Code-Leafy/Canvas/blob/main/LICENSE) · Crafted by [Code-Leafy](https://github.com/Code-Leafy)
+[MIT License](https://github.com/Code-Leafy/Canval/blob/main/LICENSE) · Crafted by [Code-Leafy](https://github.com/Code-Leafy)
 
 </div>
