@@ -6,7 +6,7 @@ const os = require('os');
 
 nativeTheme.themeSource = 'dark';
 if (process.platform === 'win32') {
-  try { app.setAppUserModelId('com.code-leafy.canval'); } catch { /* ignore */ }
+  try { app.setAppUserModelId('com.code-leafy.canval'); } catch { }
 }
 
 let autoUpdater = null;
@@ -121,9 +121,6 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
-      // Terminals paint via requestAnimationFrame. Without this, Chromium
-      // freezes all frames the moment the window is occluded/minimized and
-      // every terminal goes stale or blank until refocused.
       backgroundThrottling: false,
     },
   });
@@ -134,7 +131,7 @@ function createWindow() {
   mainWindow.on('unmaximize', () => mainWindow.webContents.send('win:maximized', false));
   mainWindow.on('closed', () => {
     for (const [id, s] of sessions) {
-      try { s.kill(); } catch { /* ignore */ }
+      try { s.kill(); } catch { }
       sessions.delete(id);
     }
     mainWindow = null;
@@ -183,7 +180,6 @@ ipcMain.handle('projects:list', () => {
         cwd: data.settings?.defaultCwd || '',
       });
     } catch {
-      /* missing project */
     }
   }
   return { recents, settings: idx.settings };
@@ -270,8 +266,6 @@ ipcMain.handle('projects:pickFile', async () => {
   return res.filePaths[0];
 });
 
-// Full-path CLI resolution: manual override (saved in settings) first, then
-// PATH + well-known install dirs. Returns absolute path or null.
 function resolveCli(key, cmd) {
   if (!cmd) return null;
   try {
@@ -283,9 +277,9 @@ function resolveCli(key, cmd) {
           whichCache.set(cmd, { full: ov, at: Date.now() });
           return ov;
         }
-      } catch { /* stale override, fall through */ }
+      } catch { }
     }
-  } catch { /* ignore */ }
+  } catch { }
   return resolveExe(cmd);
 }
 
@@ -325,10 +319,6 @@ ipcMain.handle('pty:spawn', (_e, opts) => {
   const resolvedCmd = resolveCommand(opts.preset, opts.command, opts.args);
   const args = resolvedCmd.args;
   const cwd = opts.cwd && fs.existsSync(opts.cwd) ? opts.cwd : os.homedir();
-  // Fail fast with a machine-readable marker when the executable itself is
-  // missing, so the UI can show install guidance instead of a raw error.
-  // (Custom terminals without a command fall through to the default shell.)
-  // Spawn by absolute path whenever resolvable (immune to search quirks).
   let file = resolvedCmd.file;
   if (opts.preset !== 'custom' || opts.command) {
     const probeCmd = presetProbe(opts.preset, opts.command);
@@ -351,9 +341,6 @@ ipcMain.handle('pty:spawn', (_e, opts) => {
         TERM: 'xterm-256color',
         COLORTERM: 'truecolor',
       },
-      // WinPTY is the default backend: ConPTY input silently dies in some
-      // GUI-hosted environments, while WinPTY works everywhere on Windows.
-      // Pass useConpty:true explicitly to opt into ConPTY.
       useConpty: opts.useConpty === true,
       useConptyDll: !!opts.useConptyDll,
     });
@@ -374,26 +361,24 @@ ipcMain.handle('pty:spawn', (_e, opts) => {
 ipcMain.on('pty:write', (_e, id, data) => {
   try {
     sessions.get(id)?.write(data);
-  } catch { /* ignore */ }
+  } catch { }
 });
 
 ipcMain.on('pty:resize', (_e, id, cols, rows) => {
   try {
     sessions.get(id)?.resize(Math.max(2, cols | 0), Math.max(1, rows | 0));
-  } catch { /* ignore */ }
+  } catch { }
 });
 
 ipcMain.handle('pty:kill', (_e, id) => {
   const s = sessions.get(id);
   if (s) {
-    try { s.kill(); } catch { /* ignore */ }
+    try { s.kill(); } catch { }
     sessions.delete(id);
   }
   return true;
 });
 
-// Resolve an executable the way the OS shell would (PATH + PATHEXT on Windows).
-// Returns an ABSOLUTE path when found, null otherwise.
 const whichCache = new Map();
 function cleanDir(d) {
   let s = String(d || '').trim();
@@ -408,7 +393,7 @@ function wellKnownCliDirs() {
   const appData = process.env.APPDATA || path.join(home, 'AppData', 'Roaming');
   const localApp = process.env.LOCALAPPDATA || path.join(home, 'AppData', 'Local');
   return [
-    path.join(appData, 'npm'), // `npm i -g` binaries (often missing from PATH)
+    path.join(appData, 'npm'),
     path.join(localApp, 'Volta', 'bin'),
     path.join(home, 'scoop', 'shims'),
     path.join(process.env.ProgramFiles || 'C:\\Program Files', 'nodejs'),
@@ -426,7 +411,7 @@ function resolveExe(cmd) {
         for (const ext of ['.exe', '.cmd', '.bat']) cands.push(cmd + ext);
       }
       for (const c of cands) {
-        try { if (fs.statSync(c).isFile()) { full = c; break; } } catch { /* next */ }
+        try { if (fs.statSync(c).isFile()) { full = c; break; } } catch { }
       }
     } else {
       const dirs = String(process.env.PATH || '').split(path.delimiter).map(cleanDir).filter(Boolean);
@@ -444,11 +429,9 @@ function resolveExe(cmd) {
               full = cand;
               break outer;
             }
-          } catch { /* next */ }
+          } catch { }
         }
       }
-      // Well-known install locations (npm globals etc. are often missing from PATH,
-      // e.g. version managers or shell-profile shims that GUI apps never inherit).
       if (!full) {
         outer2: for (const d of wellKnownCliDirs()) {
           for (const n of names) {
@@ -458,7 +441,7 @@ function resolveExe(cmd) {
                 full = full2;
                 break outer2;
               }
-            } catch { /* next */ }
+            } catch { }
           }
         }
       }
@@ -502,7 +485,6 @@ ipcMain.handle('term:paste', () => {
 });
 
 function normalizeAccent(raw) {
-  // Electron returns '#RRGGBB' — keep it simple and defensive.
   let s = String(raw || '').replace(/[^0-9a-f]/gi, '');
   if (s.length > 6) s = s.slice(-6);
   if (s.length === 3) s = s.split('').map((c) => c + c).join('');
@@ -521,16 +503,15 @@ ipcMain.handle('system:accent', () => {
 function broadcastAccent() {
   try {
     mainWindow?.webContents.send('system:accent-changed', normalizeAccent(systemPreferences.getAccentColor()));
-  } catch { /* ignore */ }
+  } catch { }
 }
 
 try {
   systemPreferences.on('accent-color-changed', broadcastAccent);
-} catch { /* older Electron */ }
+} catch { }
 
-// ---- Auto-updates (GitHub releases, packaged builds only) ----
 function updaterSend(state) {
-  try { mainWindow?.webContents.send('updater:status', state); } catch { /* ignore */ }
+  try { mainWindow?.webContents.send('updater:status', state); } catch { }
 }
 
 function setupUpdater() {
@@ -543,8 +524,8 @@ function setupUpdater() {
   autoUpdater.on('download-progress', (p) => updaterSend({ state: 'downloading', percent: Math.round(p.percent || 0) }));
   autoUpdater.on('update-downloaded', (info) => updaterSend({ state: 'ready', version: info.version }));
   autoUpdater.on('error', (err) => updaterSend({ state: 'error', message: String((err && err.message) || err) }));
-  try { autoUpdater.checkForUpdatesAndNotify(); } catch { /* offline etc. */ }
-  setInterval(() => { try { autoUpdater.checkForUpdatesAndNotify(); } catch { /* ignore */ } }, 6 * 3600 * 1000);
+  try { autoUpdater.checkForUpdatesAndNotify(); } catch { }
+  setInterval(() => { try { autoUpdater.checkForUpdatesAndNotify(); } catch { } }, 6 * 3600 * 1000);
 }
 
 ipcMain.handle('app:version', () => app.getVersion());
@@ -560,6 +541,6 @@ ipcMain.handle('updater:check', async () => {
   }
 });
 ipcMain.handle('updater:quitInstall', () => {
-  try { autoUpdater?.quitAndInstall(); } catch { /* ignore */ }
+  try { autoUpdater?.quitAndInstall(); } catch { }
   return true;
 });
