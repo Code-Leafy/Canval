@@ -1,4 +1,3 @@
-# Bound to the Canvas project: keep LF endings for code, leave binaries alone.
 * text=auto eol=lf
 *.png binary
 *.ico binary

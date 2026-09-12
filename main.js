@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, nativeTheme, clipboard, systemPreferences } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, nativeTheme, clipboard, systemPreferences, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const fsp = require('fs/promises');
@@ -244,6 +244,18 @@ ipcMain.handle('projects:openFile', async () => {
   return data;
 });
 
+const EXTERNAL_ALLOWLIST = /^https:\/\/(github\.com\/Code-Leafy\/Canval|code-leafy\.github\.io)\/?/i;
+ipcMain.handle('app:openExternal', async (_e, url) => {
+  const target = String(url || '');
+  if (!EXTERNAL_ALLOWLIST.test(target)) return false;
+  try {
+    await shell.openExternal(target);
+    return true;
+  } catch {
+    return false;
+  }
+});
+
 ipcMain.handle('projects:pickDir', async (_e, title) => {
   const res = await dialog.showOpenDialog(mainWindow, {
     title: title || 'Working directory',
@@ -318,7 +330,14 @@ ipcMain.handle('pty:spawn', (_e, opts) => {
   }
   const resolvedCmd = resolveCommand(opts.preset, opts.command, opts.args);
   const args = resolvedCmd.args;
-  const cwd = opts.cwd && fs.existsSync(opts.cwd) ? opts.cwd : os.homedir();
+  const requestedCwd = opts.cwd ? String(opts.cwd) : '';
+  const fallbackCwd = opts.fallbackCwd ? String(opts.fallbackCwd) : '';
+  const isDir = (p) => {
+    if (!p) return false;
+    try { return fs.statSync(p).isDirectory(); } catch { return false; }
+  };
+  const cwdMissing = !!requestedCwd && !isDir(requestedCwd);
+  const cwd = isDir(requestedCwd) ? requestedCwd : (isDir(fallbackCwd) ? fallbackCwd : os.homedir());
   let file = resolvedCmd.file;
   if (opts.preset !== 'custom' || opts.command) {
     const probeCmd = presetProbe(opts.preset, opts.command);
@@ -352,7 +371,7 @@ ipcMain.handle('pty:spawn', (_e, opts) => {
       mainWindow?.webContents.send('pty:exit', id, exitCode);
     });
     sessions.set(id, proc);
-    return { id, file, cwd };
+    return { id, file, cwd, requestedCwd: requestedCwd || null, cwdMissing };
   } catch (err) {
     return { id, error: String(err.message || err) };
   }

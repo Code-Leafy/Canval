@@ -52,7 +52,7 @@ Every terminal card is a genuine `node-pty` session — not a simulation. Full T
 
 ### Infinite Canvas Workspace
 
-Pan (middle-drag), zoom (scroll / rail / fit), snap-to-grid with dots/lines/crosses backgrounds, rubber-band multi-select, Ctrl+click groups, and group drag/delete — like a native desktop.
+Pan (middle-drag), zoom (scroll / rail / fit / Ctrl+wheel over a terminal), snap-to-grid with dots/lines/crosses backgrounds, rubber-band multi-select, Ctrl+click groups, and group drag/delete — like a native desktop.
 
 ### Notes & Wires
 
@@ -69,6 +69,10 @@ Frameless rounded window with taskbar icon, custom caption controls, system acce
 ### Local-First Projects
 
 Each canvas keeps its working folder, camera, cards, and wires in `%APPDATA%`-adjacent user data. Auto-save with busy indicator, rename/duplicate/delete, and scrollback snapshots.
+
+### Canvas Folder
+
+Every canvas has one working folder (right-click the canvas → **Canvas Folder…**). Terminals start there, cards that follow the canvas are retargeted when it changes, and plain shells move in place with a `cd` — no restart. Cards you pointed somewhere else keep their own folder.
 
 <div align="center">
 
@@ -99,7 +103,7 @@ Requires Node.js 20+ and Windows build tools (for `node-pty`).
 ```bash
 # Clone and install
 git clone https://github.com/Code-Leafy/Canval.git
-cd Canvas
+cd Canval
 npm install
 
 # Rebuild the native PTY module for Electron, then start
@@ -121,6 +125,7 @@ npm run dist
 Inside Canval you can:
 
 - Create canvases bound to a working folder from the floating **New Canvas** pill.
+- Change that folder any time (canvas right-click → **Canvas Folder…**, or the card menu on the home screen); following terminals move to it on the next open.
 - Spawn terminals from the `+` speed-dial (or `Ctrl+T`), restart sessions, and change CLI presets per card.
 - Double-click empty canvas for a note; drag ports to wire cards together.
 - Rubber-band select, `Ctrl+Click` groups, `Del` bulk delete, middle-drag pan, `Ctrl+K` search.
@@ -147,7 +152,7 @@ graph LR
 <summary><kbd>Project Structure</kbd></summary>
 
 ```text
-Canvas/
+Canval/
 ├── index.html       # Entire UI: home, canvas, settings, dialogs (single file)
 ├── main.js          # Electron main: window, PTY pool, projects, updates
 ├── preload.js       # Secure window.tc bridge (context-isolated IPC)
@@ -202,6 +207,10 @@ Canvas/
 
 Neither — it is a **desktop app**. The UI is a native-feeling window; the terminals inside are real shells.
 
+### Why did a terminal start in my home folder?
+
+The folder it was told to use no longer exists, or no folder was ever set. Canval keeps the folder you chose instead of overwriting it, tells you about the missing path, and falls back to the canvas folder (then your home directory) so the shell still opens. Right-click the canvas → **Canvas Folder…** to fix it.
+
 ### Where are my canvases stored?
 
 In the app's user-data directory on your machine (`%APPDATA%\Canval` area: `library.json` + per-canvas `project.json`). Nothing leaves your PC.
@@ -229,6 +238,8 @@ It is a local-first desktop tool: review the installer source, keep your CLIs up
 <div align="center">
 
 > **Educational Purpose Only:** This project is provided for educational and research purposes. Users are solely responsible for compliance with all local laws. The developer assumes no liability for misuse.
+
+**If Canval is useful to you, [star the repo](https://github.com/Code-Leafy/Canval) ⭐ — it is what helps other people discover it.** The same button lives in the app's sidebar and in Settings → About.
 
 [MIT License](https://github.com/Code-Leafy/Canval/blob/main/LICENSE) · Crafted by [Code-Leafy](https://github.com/Code-Leafy)
 

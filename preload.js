@@ -51,6 +51,7 @@ contextBridge.exposeInMainWorld('tc', {
   },
   system: {
     accent: () => ipcRenderer.invoke('system:accent'),
+    openExternal: (url) => ipcRenderer.invoke('app:openExternal', url),
     onAccentChanged: (fn) => {
       const l = (_e, v) => fn(v);
       ipcRenderer.on('system:accent-changed', l);

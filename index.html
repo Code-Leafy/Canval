@@ -96,7 +96,7 @@ html[data-theme="light"]{color-scheme:light}
 .xterm-viewport::-webkit-scrollbar-thumb:hover{background:#5a5a5a}
 
 svg{flex-shrink:0}
-.nav-item svg,.tool-btn svg,.card-icon-btn svg,.menu-item svg,.badge-btn svg,.proj-icon-tile svg,.brand-icon svg,.search-box svg,.minimap-toggle-btn svg,.fab-btn svg,.fab-cli svg{fill:currentColor}
+.nav-item svg,.tool-btn svg,.card-icon-btn svg,.menu-item svg,.badge-btn svg,.proj-icon-tile svg,.brand-icon svg,.search-box svg,.fab-btn svg,.fab-cli svg{fill:currentColor}
 
 [id$="-slot"]{display:inline-flex;align-items:center;justify-content:center;line-height:0;flex-shrink:0}
 [id$="-slot"] svg{display:block}
@@ -168,6 +168,17 @@ html[data-theme="light"] .search-count{background:rgba(0,0,0,.06)}
 .link-btn{background:none;border:0;padding:0;font-size:11.5px;color:var(--accent-btn,#4cc2ff);cursor:pointer;text-align:left;font-family:var(--font-body)}
 .link-btn:hover{text-decoration:underline}
 .link-btn:disabled{opacity:.55;cursor:default;text-decoration:none}
+.foot-sep{opacity:.5}
+.github-star{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:8px;text-align:left;color:var(--text-1);background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid var(--win-control-stroke);cursor:pointer;transition:background .12s,border-color .12s,transform .12s}
+.github-star:hover{background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.04));border-color:var(--border-strong);transform:translateY(-1px)}
+.github-star-icon svg,.github-star-mark svg{width:18px;height:18px}
+.github-star-icon{display:grid;place-items:center;flex:none;color:var(--text-1)}
+.github-star-mark{display:grid;place-items:center;flex:none;color:#f5c451}
+.github-star-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.github-star-text b{font-size:12.5px;font-weight:600}
+.github-star-text span{font-size:11px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-theme="light"] .github-star{background:linear-gradient(135deg,#ffffff,#f3f3f3);border-color:#e1e1e1}
+html[data-theme="light"] .github-star:hover{background:linear-gradient(135deg,#ffffff,#ececec);border-color:#c8c8c8}
 .sidebar-title{font-size:12px;font-weight:600;color:var(--text-1);margin:10px 8px 4px}
 
 .nav-item{position:relative;display:flex;align-items:center;gap:10px;padding:0 10px;height:40px;border-radius:4px;font-size:14px;font-weight:400;color:var(--text-1);text-align:left;width:100%;transition:background .1s;border:1px solid transparent}
@@ -359,6 +370,7 @@ body.wire-mode-active .card-port{border-color:var(--accent-hover)}
 .xterm-host{flex:1;min-height:0;background:#0c0c0c;padding:6px 4px 6px 10px;overflow:hidden;border-radius:0 0 8px 8px}
 .xterm-host .xterm{height:100%;padding:0}
 .xterm-host .xterm-viewport{overflow-y:auto!important}
+.canvas-card.card-terminal:has(.xterm.focus){border-color:var(--accent)}
 
 .canvas-card.card-note{background:var(--note-bg,#242424);color:var(--note-ink,#f3f4f6)}
 .canvas-card.card-note .card-header{border-bottom:1px solid var(--note-header-border,rgba(255,255,255,.07))}
@@ -372,23 +384,6 @@ body.wire-mode-active .card-port{border-color:var(--accent-hover)}
 .note-body{flex:1;padding:10px 12px;font-size:14px;line-height:20px;overflow-y:auto;user-select:text;cursor:text;outline:none;color:var(--note-ink,#f3f4f6)!important}
 .note-body:empty::before{content:"Start typing…";color:var(--note-placeholder,rgba(255,255,255,.35))!important}
 .card-shape-rounded{border-radius:8px!important}
-
-.canvas-minimap-container{position:absolute;right:12px;top:12px;width:216px;background:var(--win-card);border:1px solid var(--win-card-stroke);border-radius:8px;box-shadow:var(--shadow-flyout);z-index:30;overflow:hidden;user-select:none;display:none}
-
-.canvas-minimap-container.collapsed{width:auto}
-.canvas-minimap-container.collapsed .minimap-body{display:none}
-.minimap-header{min-height:32px;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:0 4px 0 12px;font-size:12px;font-weight:600;color:var(--text-1);border-bottom:1px solid var(--win-divider)}
-.minimap-title{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11.5px}
-.minimap-actions{display:flex;align-items:center;gap:2px;flex-shrink:0}
-.minimap-actions{display:flex;align-items:center;gap:2px}
-.minimap-toggle-btn{width:28px;height:28px;display:grid;place-items:center;border-radius:4px;color:var(--text-2);background:transparent;border:none;cursor:pointer;padding:0;transition:background .1s,color .1s}
-.minimap-toggle-btn:hover{background:rgba(255,255,255,.07);color:#fff}
-.minimap-toggle-btn svg{width:14px;height:14px}
-.minimap-body{position:relative;width:216px;height:128px;cursor:crosshair;background:#141414}
-#minimap-canvas{display:block;width:216px;height:128px}
-.minimap-viewport-box{position:absolute;border:2px solid var(--accent);background:rgba(0,120,212,.16);border-radius:2px;cursor:grab;box-sizing:border-box}
-.minimap-zoom-pill{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);font-size:11px;font-variant-numeric:tabular-nums;color:var(--text-2);background:rgba(20,20,20,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--win-control-stroke);border-radius:10px;padding:1px 10px;pointer-events:none;z-index:2}
-html[data-theme="light"] .minimap-zoom-pill{background:rgba(255,255,255,.82)}
 
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);display:grid;place-items:center;z-index:100;animation:fadeIn .14s ease;padding:20px}
 @keyframes fadeIn{from{opacity:0}}
@@ -529,8 +524,6 @@ html[data-theme="light"] .cap-btn:hover{background:rgba(0,0,0,.06);color:#000}
 html[data-theme="light"] .tag,html[data-theme="light"] .card-cli-pill{background:rgba(0,0,0,.05)}
 html[data-theme="light"] .canvas-viewport{background:#e9e9e9}
 html[data-theme="light"] .canvas-grid{background-image:radial-gradient(rgba(0,0,0,.1) 1.1px,transparent 1.5px)}
-html[data-theme="light"] .minimap-body{background:#e6e6e6}
-html[data-theme="light"] .minimap-toggle-btn:hover{background:rgba(0,0,0,.06);color:#000}
 html[data-theme="light"] .shortcut-row:nth-child(odd){background:rgba(0,0,0,.025)}
 html[data-theme="light"] .storage-meter{background:#e0e0e0}
 html[data-theme="light"] .form-select option{background:#fff}
@@ -548,8 +541,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
   .search-box{width:170px}
   .search-box kbd{display:none}
   .board-hint{display:none}
-  .canvas-minimap-container{width:176px}
-  .minimap-body,#minimap-canvas{width:176px!important;height:104px!important}
 }
 
     </style>
@@ -617,8 +608,19 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
             <button class="nav-item" id="btn-settings" title="Settings">
               <span id="settings-icon-slot" style="display:inline-flex"></span> Settings
             </button>
+            <button class="github-star" id="btn-github-star" type="button" title="Star Canval on GitHub — it helps others find it">
+              <span class="github-star-icon" id="github-icon-slot"></span>
+              <span class="github-star-text">
+                <b>Star Canval on GitHub</b>
+                <span>Code-Leafy/Canval · free &amp; open source</span>
+              </span>
+              <span class="github-star-mark" id="github-star-slot"></span>
+            </button>
             <div class="sidebar-foot">
               <span id="app-version">Canval</span>
+              <span class="foot-sep">·</span>
+              <button class="link-btn" id="btn-github-link" type="button" title="Open the GitHub repository">GitHub</button>
+              <span class="foot-sep">·</span>
               <button class="link-btn" id="btn-check-updates" type="button">Check for updates</button>
               <button class="link-btn hidden" id="update-status" type="button"></button>
             </div>
@@ -676,26 +678,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
               <button class="tool-btn" id="btn-rzwire" data-tip="Wire mode — drag ports between cards" data-tip-pos="left"><span id="rzwire-icon-slot"></span></button>
             </div>
 
-            <div class="canvas-minimap-container" id="canvas-minimap-container">
-              <div class="minimap-header">
-                <span class="minimap-title" id="minimap-title-text">Minimap</span>
-                <div class="minimap-actions">
-                  <button class="minimap-toggle-btn" id="btn-minimap-zout" type="button" title="Zoom minimap out"></button>
-                  <button class="minimap-toggle-btn" id="btn-minimap-zin" type="button" title="Zoom minimap in"></button>
-                  <button class="minimap-toggle-btn" id="btn-minimap-fit" type="button" title="Fit All into View">
-                    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 1h5.5v2H3v3.5H1V1zm8.5 0H15v5.5h-2V3h-3.5V1zM1 9.5h2V13h3.5v2H1V9.5zm12 0h2V15H9.5v-2H13V9.5z"/></svg>
-                  </button>
-                  <button class="minimap-toggle-btn" id="btn-toggle-minimap" type="button" title="Collapse/Expand Minimap">
-                    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 11.2L2.8 6l1.4-1.4L8 8.4l3.8-3.8L13.2 6 8 11.2z"/></svg>
-                  </button>
-                </div>
-              </div>
-              <div class="minimap-body" id="minimap-body" title="Click or drag to pan canvas">
-                <canvas id="minimap-canvas" width="432" height="256"></canvas>
-                <div class="minimap-viewport-box" id="minimap-viewport-box"></div>
-                <div class="minimap-zoom-pill" id="minimap-zoom-pill">100%</div>
-              </div>
-            </div>
           </div>
 
         </main>
@@ -708,12 +690,13 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
 
     <script>
       const Icons = {
+        github: `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 .9a7.1 7.1 0 0 0-2.25 13.85c.36.07.49-.15.49-.34v-1.2c-1.97.43-2.39-.95-2.39-.95-.32-.82-.79-1.04-.79-1.04-.65-.44.05-.43.05-.43.71.05 1.09.73 1.09.73.63 1.09 1.66.78 2.06.6.07-.47.25-.78.45-.96-1.57-.18-3.23-.79-3.23-3.5 0-.78.28-1.41.73-1.91-.07-.18-.32-.9.07-1.88 0 0 .6-.19 1.96.73a6.9 6.9 0 0 1 3.57 0c1.36-.92 1.96-.73 1.96-.73.39.98.14 1.7.07 1.88.46.5.73 1.13.73 1.91 0 2.72-1.66 3.32-3.24 3.5.26.22.48.65.48 1.31v1.95c0 .19.13.42.5.34A7.1 7.1 0 0 0 8 .9z"/></svg>`,
+        star: `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.4l1.9 3.9 4.3.6-3.1 3 .74 4.3L8 11.2l-3.84 2-.74-4.3-3.1-3 4.3-.6L8 1.4z"/></svg>`,
         terminal: `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.8 2.8L11 6.5l-4.2 3.7-1-1.2 2.7-2.5-2.7-2.5 1-1.2z"/><path d="M3 12h8v1.6H3z"/></svg>`,
         note: `<svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4 1h5.5L14 5.5V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zm1.5 7h5v1.2h-5V8zm0 2.2h5v1.2h-5v-1.2z"/></svg>`,
         wire: `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 5.2a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 0 0 0-4.6zm7 0a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 0 0 0-4.6zM4.5 7h7v1.5h-7V7z"/></svg>`,
         folder: `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M1.2 3.2c0-.7.5-1.2 1.2-1.2h3.9c.3 0 .6.1.8.4l1.1 1.3c.2.2.5.4.8.4h4.6c.7 0 1.2.5 1.2 1.2v5.5c0 .7-.5 1.2-1.2 1.2H2.4c-.7 0-1.2-.5-1.2-1.2V3.2z"/></svg>`,
         plus: `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 2.5h2V7h4.5v2H9v4.5H7V9H2.5V7H7V2.5z"/></svg>`,
-        minus: `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 7h10v2H3z"/></svg>`,
         search: `<svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M7 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/><path d="M10.8 10.2l3.6 3.6-1.4 1.4-3.6-3.6 1.4-1.4z"/></svg>`,
         back: `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 3.2L2.7 7.5l4.3 4.3 1.1-1.1-2.4-2.4H13V6.7H5.7l2.4-2.4L7 3.2z"/></svg>`,
         fit: `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 1h5.5v2H3v3.5H1V1zm8.5 0H15v5.5h-2V3h-3.5V1zM1 9.5h2V13h3.5v2H1V9.5zm12 0h2V15H9.5v-2H13V9.5z"/></svg>`,
@@ -841,6 +824,11 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
       const TC = (typeof window !== 'undefined' && window.tc) ? window.tc : null;
       const DEMO = !TC;
       function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+      const GITHUB_URL = 'https://github.com/Code-Leafy/Canval';
+      function openExternal(url) {
+        if (TC && TC.system && TC.system.openExternal) { try { TC.system.openExternal(url); return; } catch (e) {} }
+        try { window.open(url, '_blank', 'noopener'); } catch (e) {}
+      }
       const XTerminal = window.Terminal || null;
       const XFitAddon = (window.FitAddon && window.FitAddon.FitAddon) || null;
       const XWebglAddon = (window.WebglAddon && window.WebglAddon.WebglAddon) || null;
@@ -988,7 +976,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
         projectFilter: '',
         cmdHistory: {},
         ptyMap: new Map(),
-        minimapZoom: 1,
         _xtermWarned: false,
         _nav: 0,
 
@@ -1021,6 +1008,9 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
               const out = [];
               for (const r of recents) {
                 try { out.push(await TC.projects.load(r.id)); } catch (e) { }
+              }
+              for (const p of out) {
+                if (!p.folder && p.settings && p.settings.defaultCwd) p.folder = p.settings.defaultCwd;
               }
               this.projects = out;
             } catch (e) {
@@ -1248,6 +1238,7 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           if (nav !== this._nav) return;
           const p = this.projects.find(x => x.id === id);
           if (!p) return;
+          if (!p.folder && p.settings && p.settings.defaultCwd) p.folder = p.settings.defaultCwd;
           this.currentProject = p;
           this.view = 'canvas';
           this.selectedId = null;
@@ -1261,7 +1252,9 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           document.getElementById('titlebar-home-left').classList.add('hidden');
           document.getElementById('titlebar-canvas-left').classList.remove('hidden');
           document.getElementById('titlebar-cmd').classList.remove('hidden');
-          document.getElementById('canvas-proj-name').value = p.name;
+          const projectNameInput = document.getElementById('canvas-proj-name');
+          projectNameInput.value = p.name;
+          projectNameInput.title = this.canvasFolder(p) ? `Canvas folder: ${this.canvasFolder(p)}` : 'No canvas folder set — right-click the canvas to set one';
 
           this.applyCamera();
           this.renderCards();
@@ -1344,6 +1337,7 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           if (!p) return;
           this.showMenu(x, y, [
             { label: 'Open Canvas', icon: Icons.terminal, action: () => this.openProject(id) },
+            { label: 'Canvas Folder…', icon: Icons.folder, action: () => this.promptCanvasFolder(p.id) },
             { label: 'Rename', icon: Icons.more, action: () => this.promptRenameProject(p) },
             { label: 'Duplicate', icon: Icons.duplicate, action: () => this.duplicateProject(p) },
             { divider: true },
@@ -1432,7 +1426,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           p.notes.forEach(n => this.renderNoteCard(n, world));
 
           this.updateStatusBar();
-          this.updateMinimap();
           this.updateSearchCount();
         },
 
@@ -1657,7 +1650,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
               });
               this.renderCards();
               this.drawWires();
-              this.updateMinimap();
             };
 
             const onMove = (ev) => {
@@ -1680,7 +1672,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
               if (hasMoved) {
                 this.persistProject(this.currentProject);
               }
-              this.updateMinimap();
             };
 
             window.addEventListener('mousemove', onMove);
@@ -1731,7 +1722,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
                 if (prec && prec.fit) { try { prec.fit.fit(); } catch (err) {} }
                 this.requestPtyResize(prec, item.id);
                 this.drawWires();
-                this.updateMinimap();
               };
 
               const onMove = (ev) => {
@@ -1755,7 +1745,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
                   this.persistProject(this.currentProject);
                   if (item.preset && this.ptyMap.has(item.id)) this.respawnPTY(item.id);
                 }
-                this.updateMinimap();
               };
 
               window.addEventListener('mousemove', onMove);
@@ -1777,6 +1766,8 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           el.oncontextmenu = (e) => {
             e.preventDefault();
             e.stopPropagation();
+            const xtermEl = e.target.closest && e.target.closest('.xterm');
+            if (xtermEl && xtermEl.classList.contains('enable-mouse-events')) return;
             if (!this.isSelected(item.id)) this.selectCard(item.id);
             this.showCardContextMenu(e.clientX, e.clientY, item);
           };
@@ -1864,13 +1855,15 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
         },
 
         async killAllPtys() {
+          const kills = [];
           for (const [id, rec] of this.ptyMap) {
             try { rec._rzT && clearTimeout(rec._rzT); } catch (e) {}
             try { rec.ro && rec.ro.disconnect(); } catch (e) {}
             try { rec.term.dispose(); } catch (e) {}
-            if (TC) { try { await TC.pty.kill(id); } catch (e) {} }
+            if (TC) { try { kills.push(TC.pty.kill(id).catch(() => {})); } catch (e) {} }
           }
           this.ptyMap.clear();
+          if (kills.length) await Promise.all(kills);
         },
 
         async killPty(id) {
@@ -1915,7 +1908,7 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
 
         async attachAllPtys() {
           if (DEMO || !this.currentProject) return;
-          for (const t of (this.currentProject.terminals || [])) await this.attachPTY(t);
+          await Promise.all((this.currentProject.terminals || []).map(t => this.attachPTY(t).catch(() => {})));
         },
 
         async attachPTY(t) {
@@ -1965,27 +1958,35 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           try { (t.history || []).forEach(h => { if (h && h.text) term.writeln(h.text); }); } catch (e) {}
           term.onData(d => { try { TC.pty.write(t.id, d); } catch (e) {} });
           try {
+            const copySelection = () => {
+              let sel = '';
+              try { sel = term.getSelection(); } catch (e) {}
+              if (!sel) return false;
+              TC.clip.copy(sel).then(() => { try { term.clearSelection(); } catch (e) {} }).catch(() => {});
+              return true;
+            };
+            const pasteClipboard = () => {
+              TC.clip.paste().then((text) => { if (text) { try { term.paste(text); } catch (e) {} } }).catch(() => {});
+            };
             term.attachCustomKeyEventHandler((kev) => {
               if (kev.type !== 'keydown') return true;
               const mod = kev.ctrlKey || kev.metaKey;
-              if (mod && !kev.shiftKey && !kev.altKey && kev.code === 'KeyC') {
-                let sel = '';
-                try { sel = term.getSelection(); } catch (e) {}
-                if (sel) {
-                  kev.preventDefault();
-                  TC.clip.copy(sel).then(() => { try { term.clearSelection(); } catch (e) {} }).catch(() => {});
-                  return false;
-                }
-                return true;
-              }
-              if (mod && !kev.shiftKey && !kev.altKey && kev.code === 'KeyV') {
+              const shift = kev.shiftKey;
+              if (kev.altKey) return true;
+              if (mod && kev.code === 'KeyC') {
+                if (!shift && !copySelection()) return true;
                 kev.preventDefault();
-                TC.clip.paste().then((text) => { if (text) { try { term.paste(text); } catch (e) {} } }).catch(() => {});
+                copySelection();
                 return false;
               }
-              if (!mod && kev.shiftKey && !kev.altKey && kev.code === 'Insert') {
+              if (mod && kev.code === 'KeyV') {
                 kev.preventDefault();
-                TC.clip.paste().then((text) => { if (text) { try { term.paste(text); } catch (e) {} } }).catch(() => {});
+                pasteClipboard();
+                return false;
+              }
+              if (kev.code === 'Insert' && shift !== mod) {
+                kev.preventDefault();
+                if (mod) copySelection(); else pasteClipboard();
                 return false;
               }
               return true;
@@ -1995,7 +1996,9 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
             const res = await TC.pty.spawn({
               id: t.id,
               preset: t.preset === 'custom' ? 'custom' : t.preset,
-              command: t.command, args: t.args || [], cwd: t.cwd,
+              command: t.command, args: t.args || [],
+              cwd: this.terminalWorkdir(t),
+              fallbackCwd: this.canvasFolder(),
               useConpty: Settings.data.ptyBackend === 'conpty',
               cols: term.cols, rows: term.rows
             });
@@ -2048,7 +2051,8 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
                 term.writeln('Check the working directory and command, then card menu → Restart session. If this persists, delete this card and recreate it after reinstalling the CLI.');
               }
             } else if (res && res.cwd) {
-              t.cwd = res.cwd;
+              if (!t.cwd) t.cwd = res.cwd;
+              if (res.cwdMissing) this.missingFolderNotice(res.requestedCwd, res.cwd);
             }
           } catch (e) {
             try { term.writeln('\x1b[31mPTY unavailable: ' + e.message + '\x1b[0m'); } catch (_) {}
@@ -2096,12 +2100,58 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           this._refitT = setTimeout(() => this.refitAllTerms(), 280);
         },
 
+        forwardWheelToTerminal(host, e) {
+          if (!e.deltaY) return;
+          const card = host.closest('.canvas-card');
+          const rec = card && this.ptyMap.get(card.dataset.id);
+          const target = (rec && rec.term && rec.term.element) || host.querySelector('.xterm');
+          if (!target) return;
+          try {
+            target.dispatchEvent(new WheelEvent('wheel', {
+              deltaX: e.deltaX, deltaY: e.deltaY, deltaZ: e.deltaZ,
+              deltaMode: e.deltaMode, clientX: e.clientX, clientY: e.clientY,
+              bubbles: false, cancelable: true
+            }));
+          } catch (err) {}
+        },
+
+        installTermMouseZoomFix() {
+          if (this._termMouseZoomFix) return;
+          this._termMouseZoomFix = true;
+          this._termGestureScreen = null;
+          const types = ['mousedown', 'mouseup', 'mousemove', 'click', 'dblclick', 'auxclick', 'wheel'];
+          const fix = (e) => {
+            if (e.ctrlKey || e.metaKey) return;
+            const cam = this.currentProject && this.currentProject.camera;
+            const zoom = (cam && cam.zoom) || 1;
+            const target = e.target;
+            const hit = target && target.closest ? target.closest('.xterm-screen') : null;
+            let screen = null;
+            if (e.type === 'mousedown') {
+              screen = hit;
+              this._termGestureScreen = hit;
+            } else if (e.type === 'mouseup') {
+              screen = this._termGestureScreen;
+              this._termGestureScreen = null;
+            } else if (this._termGestureScreen && e.buttons) {
+              screen = this._termGestureScreen;
+            } else {
+              this._termGestureScreen = null;
+              screen = e.buttons ? null : hit;
+            }
+            if (zoom === 1 || !screen || !screen.isConnected) return;
+            const rect = screen.getBoundingClientRect();
+            try {
+              Object.defineProperty(e, 'clientX', { value: rect.left + (e.clientX - rect.left) / zoom, configurable: true });
+              Object.defineProperty(e, 'clientY', { value: rect.top + (e.clientY - rect.top) / zoom, configurable: true });
+            } catch (err) {}
+          };
+          for (const type of types) document.addEventListener(type, fix, true);
+        },
+
         async respawnAllPtys() {
           if (DEMO || !this.currentProject) return;
-          const terms = [...(this.currentProject.terminals || [])];
-          for (const t of terms) {
-            await this.reattachPTY(t.id);
-          }
+          await Promise.all((this.currentProject.terminals || []).map(t => this.reattachPTY(t.id).catch(() => {})));
         },
 
         async reattachPTY(id) {
@@ -2718,14 +2768,12 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
             sel.color = b.dataset.c || undefined;
             this.scheduleSave();
             this.drawWires();
-            this.updateMinimap();
           });
           fly.querySelectorAll('.wire-style-btn').forEach(b => b.onclick = (e) => {
             e.stopPropagation();
             sel.dash = b.dataset.d || undefined;
             this.scheduleSave();
             this.drawWires();
-            this.updateMinimap();
           });
           fly.querySelector('.wire-fly-del').onclick = (e) => {
             e.stopPropagation();
@@ -2744,7 +2792,17 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           };
         },
 
+        scheduleCameraApply() {
+          if (this._camRaf) return;
+          if (document.hidden) { this.applyCamera(); return; }
+          this._camRaf = requestAnimationFrame(() => {
+            this._camRaf = 0;
+            try { this.applyCamera(); } catch (e) {}
+          });
+        },
+
         applyCamera() {
+          if (!this.currentProject) return;
           const cam = this.currentProject.camera;
           const world = document.getElementById('canvas-world');
           const grid = document.getElementById('canvas-grid-bg');
@@ -2779,7 +2837,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           if (railVal) railVal.textContent = pct;
 
           this.updateGridButtonState();
-          this.updateMinimap();
           this.updateWireFlyout(this._wireFlyMid);
         },
 
@@ -2940,7 +2997,7 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           cam.x = px - wx * cam.zoom;
           cam.y = py - wy * cam.zoom;
 
-          this.applyCamera();
+          this.scheduleCameraApply();
           this.scheduleSave();
           this.scheduleRefit();
         },
@@ -2978,335 +3035,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           this.scheduleRefit();
         },
 
-        initMinimap() {
-          if (true) return;
-          const body = document.getElementById('minimap-body');
-          const toggleBtn = document.getElementById('btn-toggle-minimap');
-          const container = document.getElementById('canvas-minimap-container');
-          if (!body || !toggleBtn || !container) return;
-
-          document.getElementById('btn-minimap-zout').innerHTML = Icons.minus;
-          document.getElementById('btn-minimap-zin').innerHTML = Icons.plus;
-          document.getElementById('btn-minimap-zout').onclick = (e) => {
-            e.stopPropagation();
-            this.minimapZoom = Math.max(0.5, (this.minimapZoom || 1) / 1.3);
-            this.updateMinimap();
-          };
-          document.getElementById('btn-minimap-zin').onclick = (e) => {
-            e.stopPropagation();
-            this.minimapZoom = Math.min(4, (this.minimapZoom || 1) * 1.3);
-            this.updateMinimap();
-          };
-
-          toggleBtn.onclick = (e) => {
-            e.stopPropagation();
-            container.classList.toggle('collapsed');
-            const isCollapsed = container.classList.contains('collapsed');
-            toggleBtn.title = isCollapsed ? 'Expand Minimap' : 'Collapse Minimap';
-            toggleBtn.innerHTML = isCollapsed
-              ? Icons.chevronUp
-              : Icons.chevronDown;
-          };
-
-          const panToMinimapPoint = (clientX, clientY) => {
-            if (!this.minimapTransform || !this.currentProject) return;
-            const rect = body.getBoundingClientRect();
-            const K = this.minimapTransform.K || 1;
-            const clickX = Math.max(0, Math.min(rect.width, clientX - rect.left)) * K;
-            const clickY = Math.max(0, Math.min(rect.height, clientY - rect.top)) * K;
-
-            const { minX, minY, scale, offX, offY } = this.minimapTransform;
-            const targetWorldX = (clickX - offX) / scale + minX;
-            const targetWorldY = (clickY - offY) / scale + minY;
-
-            const vpEl = document.getElementById('canvas-viewport');
-            const vpRect = vpEl ? vpEl.getBoundingClientRect() : { width: 800, height: 600 };
-            const cam = this.currentProject.camera;
-
-            cam.x = vpRect.width / 2 - targetWorldX * cam.zoom;
-            cam.y = vpRect.height / 2 - targetWorldY * cam.zoom;
-
-            this.applyCamera();
-            this.scheduleSave();
-          };
-
-          let isDragging = false;
-          body.onmousedown = (e) => {
-            e.stopPropagation();
-            isDragging = true;
-            panToMinimapPoint(e.clientX, e.clientY);
-
-            const onMove = (ev) => {
-              if (!isDragging) return;
-              if (ev.buttons === 0) {
-                isDragging = false;
-                window.removeEventListener('mousemove', onMove);
-                window.removeEventListener('mouseup', onUp);
-                return;
-              }
-              panToMinimapPoint(ev.clientX, ev.clientY);
-            };
-            const onUp = () => {
-              isDragging = false;
-              window.removeEventListener('mousemove', onMove);
-              window.removeEventListener('mouseup', onUp);
-            };
-            window.addEventListener('mousemove', onMove);
-            window.addEventListener('mouseup', onUp);
-          };
-        },
-
-        updateMinimap() {
-          return;
-          if (this._mmQueued) return;
-          this._mmQueued = true;
-          requestAnimationFrame(() => {
-            this._mmQueued = false;
-            this._drawMinimap();
-          });
-        },
-
-        minimapTermLines(item) {
-          if (!DEMO) {
-            try {
-              const rec = this.ptyMap.get(item.id);
-              if (rec && rec.term && rec.term.buffer && rec.term.buffer.active) {
-                const buf = rec.term.buffer.active;
-                const lines = [];
-                const n = Math.min(16, buf.length);
-                for (let i = Math.max(0, buf.length - n); i < buf.length; i++) {
-                  const ln = buf.getLine(i);
-                  if (ln) {
-                    const t = ln.translateToString(true).trimEnd();
-                    if (t.trim().length) lines.push(t);
-                  }
-                }
-                if (lines.length) return lines.slice(-60);
-              }
-            } catch (e) {}
-          }
-          return (item.history || []).map(h => (h && h.text) || '').filter(s => s.trim().length).slice(-60);
-        },
-
-        _drawMinimap() {
-          if (this.view !== 'canvas' || !this.currentProject) return;
-          const canvas = document.getElementById('minimap-canvas');
-          const vpBox = document.getElementById('minimap-viewport-box');
-          if (!canvas || !vpBox) return;
-          const ctx = canvas.getContext('2d');
-          if (!ctx) return;
-
-          const p = this.currentProject;
-          const allItems = [...(p.terminals || []), ...(p.notes || [])];
-          const cam = p.camera;
-          const vpEl = document.getElementById('canvas-viewport');
-          const vpRect = vpEl ? vpEl.getBoundingClientRect() : { width: 800, height: 600 };
-
-          const curVwX = -cam.x / cam.zoom;
-          const curVwY = -cam.y / cam.zoom;
-          const curVwW = vpRect.width / cam.zoom;
-          const curVwH = vpRect.height / cam.zoom;
-
-          let minX = curVwX;
-          let minY = curVwY;
-          let maxX = curVwX + curVwW;
-          let maxY = curVwY + curVwH;
-
-          allItems.forEach(item => {
-            minX = Math.min(minX, item.x);
-            minY = Math.min(minY, item.y);
-            maxX = Math.max(maxX, item.x + item.w);
-            maxY = Math.max(maxY, item.y + item.h);
-          });
-
-          const pad = 240;
-          minX -= pad;
-          minY -= pad;
-          maxX += pad;
-          maxY += pad;
-
-          const worldW = Math.max(1, maxX - minX);
-          const worldH = Math.max(1, maxY - minY);
-
-          const mW = canvas.width;
-          const mH = canvas.height;
-          const cssW = (canvas.parentElement && canvas.parentElement.clientWidth) || 216;
-          const K = mW / Math.max(1, cssW);
-          const scale = Math.min(mW / worldW, mH / worldH) * (this.minimapZoom || 1);
-
-          const offX = (mW - worldW * scale) / 2;
-          const offY = (mH - worldH * scale) / 2;
-
-          this.minimapTransform = { minX, minY, scale, offX, offY, mW, mH, K };
-
-          ctx.clearRect(0, 0, mW, mH);
-
-          const mmLight = document.documentElement.dataset.theme === 'light';
-          ctx.fillStyle = mmLight ? '#f2f2f2' : '#171717';
-          ctx.fillRect(0, 0, mW, mH);
-
-          ctx.strokeStyle = mmLight ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.03)';
-          ctx.lineWidth = Math.max(1, K * 0.5);
-          for (let x = 0; x < mW; x += 18 * K) {
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, mH);
-            ctx.stroke();
-          }
-          for (let y = 0; y < mH; y += 18 * K) {
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(mW, y);
-            ctx.stroke();
-          }
-
-          const wires = p.wires || [];
-          ctx.lineWidth = Math.max(1, K * 0.6);
-          wires.forEach(w => {
-            const f = this.findCard(w.fromId);
-            const t = this.findCard(w.toId);
-            if (!f || !t) return;
-            const p1 = this.getPortCoord(f, w.fromPort || 'e');
-            const p2 = this.getPortCoord(t, w.toPort || 'w');
-            const info = this.calculateOrthogonalPath(p1, p2, w.fromPort || 'e', w.toPort || 'w', w.fromId, w.toId);
-            const isSel = this.selectedId === 'wire:' + w.id;
-
-            ctx.strokeStyle = w.color || (isSel ? (mmLight ? '#0078d4' : '#60cdff') : (mmLight ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.28)'));
-            ctx.beginPath();
-            ctx.setLineDash(w.dash ? w.dash.split(' ').map(Number) : []);
-            info.waypoints.forEach((pt, i) => {
-              const mx = (pt.x - minX) * scale + offX;
-              const my = (pt.y - minY) * scale + offY;
-              if (i === 0) ctx.moveTo(mx, my);
-              else ctx.lineTo(mx, my);
-            });
-            ctx.stroke();
-            ctx.setLineDash([]);
-          });
-
-          allItems.forEach(item => {
-            const cx = (item.x - minX) * scale + offX;
-            const cy = (item.y - minY) * scale + offY;
-            const cw = Math.max(6 * K, item.w * scale);
-            const ch = Math.max(5 * K, item.h * scale);
-            const isSel = this.isSelected(item.id);
-
-            if (item.preset) {
-              const foundPreset = PRESETS.find(p => p.id === item.preset) || PRESETS[0];
-              const accentColor = foundPreset.color || '#a1a1aa';
-
-              ctx.fillStyle = isSel ? '#272a34' : '#1a1c22';
-              ctx.beginPath();
-              if (ctx.roundRect) ctx.roundRect(cx, cy, cw, ch, 3);
-              else ctx.rect(cx, cy, cw, ch);
-              ctx.fill();
-
-              const headerH = Math.max(2, Math.min(5, ch * 0.22));
-              ctx.fillStyle = accentColor;
-              ctx.beginPath();
-              if (ctx.roundRect) ctx.roundRect(cx, cy, cw, headerH, [3, 3, 0, 0]);
-              else ctx.rect(cx, cy, cw, headerH);
-              ctx.fill();
-
-              const histLines = this.minimapTermLines(item);
-              const tfs = Math.max(2.5, (Settings.data.fontSize || 14) * 1.25 * scale);
-              if (histLines.length && ch > headerH + tfs + 6 && cw > 30) {
-                ctx.save();
-                ctx.beginPath();
-                ctx.rect(cx + 2, cy + headerH + 2, Math.max(1, cw - 4), Math.max(1, ch - headerH - 4));
-                ctx.clip();
-                ctx.font = `${tfs}px "Cascadia Code", Consolas, monospace`;
-                ctx.textBaseline = 'top';
-                ctx.fillStyle = 'rgba(255,255,255,0.66)';
-                let tly = cy + headerH + 3;
-                for (const ln of histLines) {
-                  if (tly > cy + ch - 2) break;
-                  ctx.fillText(String(ln).slice(0, 56), cx + 4, tly);
-                  tly += tfs;
-                }
-                ctx.restore();
-              } else if (ch > 10 && cw > 14) {
-                ctx.fillStyle = 'rgba(255,255,255,0.18)';
-                const lineW = Math.max(4, cw * 0.55);
-                ctx.fillRect(cx + 2, cy + headerH + 2, lineW, 1);
-                if (ch > 16) {
-                  ctx.fillRect(cx + 2, cy + headerH + 4, lineW * 0.75, 1);
-                }
-              }
-            } else {
-              const fill = item.fill || 'rgba(40, 42, 50, 0.9)';
-              ctx.fillStyle = fill;
-              ctx.beginPath();
-
-              if (ctx.roundRect) ctx.roundRect(cx, cy, cw, ch, 3);
-              else ctx.rect(cx, cy, cw, ch);
-              ctx.fill();
-
-              const noteLines = String(item.text || '').split('\n').map(s => s.trim()).filter(s => s.length).slice(0, 60);
-              const nfs = Math.max(2.5, 20 * scale);
-              if (noteLines.length && ch > nfs + 10 && cw > 36) {
-                ctx.save();
-                ctx.beginPath();
-                ctx.rect(cx + 3, cy + 3, Math.max(1, cw - 6), Math.max(1, ch - 6));
-                ctx.clip();
-                ctx.font = `${nfs}px "Segoe UI", system-ui, sans-serif`;
-                ctx.textBaseline = 'top';
-                ctx.fillStyle = isColorLight(item.fill || '') ? 'rgba(0,0,0,0.62)' : 'rgba(255,255,255,0.6)';
-                let nly = cy + 5;
-                for (const ln of noteLines) {
-                  if (nly > cy + ch - 2) break;
-                  ctx.fillText(ln.slice(0, 52), cx + 5, nly);
-                  nly += nfs;
-                }
-                ctx.restore();
-              }
-            }
-
-            ctx.strokeStyle = isSel ? '#ffffff' : 'rgba(255, 255, 255, 0.15)';
-            ctx.lineWidth = isSel ? 1.5 * K : 0.7 * K;
-            ctx.beginPath();
-            if (ctx.roundRect) ctx.roundRect(cx, cy, cw, ch, 3);
-            else ctx.rect(cx, cy, cw, ch);
-            ctx.stroke();
-
-            if (cw > 26 && ch > 12) {
-              ctx.font = `${Math.max(10, 6 * K)}px system-ui, sans-serif`;
-              ctx.textBaseline = 'alphabetic';
-              ctx.textBaseline = 'alphabetic';
-              ctx.fillStyle = isSel ? (mmLight ? '#0078d4' : '#ffffff') : (mmLight ? 'rgba(0, 0, 0, 0.65)' : 'rgba(255, 255, 255, 0.7)');
-              const label = item.name.length > 7 ? item.name.substring(0, 6) + '..' : item.name;
-              ctx.fillText(label, cx + 2, cy + ch - 2);
-            }
-          });
-
-          const boxK = (this.minimapTransform && this.minimapTransform.K) || 1;
-          const boxX = (curVwX - minX) * scale + offX;
-          const boxY = (curVwY - minY) * scale + offY;
-          const boxW = curVwW * scale;
-          const boxH = curVwH * scale;
-
-          const mmBody = canvas.parentElement;
-          const cssBW = (mmBody && mmBody.clientWidth) || 216;
-          const cssBH = (mmBody && mmBody.clientHeight) || 128;
-          let bw = Math.min(cssBW, Math.max(8, Math.round(boxW / boxK)));
-          let bh = Math.min(cssBH, Math.max(6, Math.round(boxH / boxK)));
-          let bx = Math.max(0, Math.min(cssBW - bw, Math.round(boxX / boxK)));
-          let by = Math.max(0, Math.min(cssBH - bh, Math.round(boxY / boxK)));
-          vpBox.style.left = `${bx}px`;
-          vpBox.style.top = `${by}px`;
-          vpBox.style.width = `${bw}px`;
-          vpBox.style.height = `${bh}px`;
-
-          const titleEl = document.getElementById('minimap-title-text');
-          if (titleEl) {
-            titleEl.textContent = 'Minimap';
-          }
-          const zoomPill = document.getElementById('minimap-zoom-pill');
-          if (zoomPill) {
-            zoomPill.textContent = `${Math.round((this.minimapZoom || 1) * 100)}%`;
-          }
-        },
-
         selectCard(id, additive) {
           const bump = (item) => {
             this.currentProject.zCounter = (this.currentProject.zCounter || 10) + 1;
@@ -3334,19 +3062,29 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
             const item = id && this.findCard(id);
             if (item) bump(item);
           }
-          this.renderCards();
-          this.drawWires();
-          this.updateStatusBar();
+          this.applySelectionChange();
         },
 
         isSelected(id) { return (this.selectedIds || []).indexOf(id) >= 0; },
 
+        applySelectionClasses() {
+          const world = document.getElementById('canvas-world');
+          if (!world) return;
+          world.querySelectorAll('.canvas-card').forEach(el => {
+            el.classList.toggle('selected', this.isSelected(el.dataset.id));
+          });
+        },
+
+        applySelectionChange() {
+          this.applySelectionClasses();
+          this.drawWires();
+          this.updateStatusBar();
+        },
+
         clearSelection() {
           this.selectedId = null;
           this.selectedIds = [];
-          this.renderCards();
-          this.drawWires();
-          this.updateStatusBar();
+          this.applySelectionChange();
         },
 
         deleteCard(id, opts) {
@@ -3406,6 +3144,18 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
                 icon: Icons.folder,
                 action: () => this.promptTerminalCwd(item)
               });
+              if (this.folderCdCommand(item.preset, this.canvasFolder())) {
+                menuItems.push({
+                  label: 'cd to Canvas Folder',
+                  icon: Icons.folder,
+                  action: async () => {
+                    const folder = this.canvasFolder();
+                    if (!folder) { this.toast('No canvas folder set'); return; }
+                    if (await this.cdLiveShellTo(item, folder)) this.toast('Shell moved to ' + folder);
+                    else this.toast('Restart this session to move it');
+                  }
+                });
+              }
               menuItems.push({
                 label: 'Copy Selection',
                 icon: Icons.duplicate,
@@ -3451,7 +3201,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
                 item.fill = color;
                 this.renderCards();
                 this.drawWires();
-                this.updateMinimap();
                 this.scheduleSave();
                 this.toast('Color updated');
               }
@@ -3463,7 +3212,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
                 item.fill = color;
                 this.renderCards();
                 this.drawWires();
-                this.updateMinimap();
                 this.scheduleSave();
               }
             });
@@ -3528,6 +3276,11 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
             },
             { divider: true },
             {
+              label: 'Canvas Folder…',
+              icon: Icons.folder,
+              action: () => this.promptCanvasFolder()
+            },
+            {
               label: 'Fit All in View',
               icon: Icons.fit,
               action: () => this.fitAll()
@@ -3584,6 +3337,42 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           this.toast('Sent to back');
         },
 
+        canvasFolder(proj) {
+          const p = proj || this.currentProject;
+          if (!p) return '';
+          return (p.folder || (p.settings && p.settings.defaultCwd) || '') + '';
+        },
+
+        terminalWorkdir(t) {
+          const own = (t && t.cwd) || '';
+          if (own) return own;
+          return this.canvasFolder() || Settings.data.defaultCwd || '';
+        },
+
+        folderCdCommand(preset, folder) {
+          const dir = String(folder || '');
+          if (!dir) return null;
+          if (preset === 'powershell' || preset === 'pwsh') return 'Set-Location -LiteralPath "' + dir.replace(/"/g, '""') + '"';
+          if (preset === 'cmd') return 'cd /d "' + dir.replace(/"/g, '""') + '"';
+          if (preset === 'bash') return 'cd "' + dir.replace(/"/g, '\\"') + '"';
+          return null;
+        },
+
+        async cdLiveShellTo(t, folder) {
+          if (DEMO || !TC || !t) return false;
+          const cmd = this.folderCdCommand(t.preset, folder);
+          if (!cmd || !this.ptyMap.has(t.id)) return false;
+          try { TC.pty.write(t.id, cmd + '\r'); } catch (e) { return false; }
+          return true;
+        },
+
+        missingFolderNotice(path, fallback) {
+          this._missingFolders = this._missingFolders || new Set();
+          if (!path || this._missingFolders.has(path)) return;
+          this._missingFolders.add(path);
+          this.toast(fallback ? `Folder not found: ${path} — started in ${fallback}` : `Folder not found: ${path} — started in your home folder`);
+        },
+
         async createTerminalAt(wx, wy, presetId = 'powershell') {
           if (!DEMO && presetId !== 'custom') {
             try {
@@ -3601,7 +3390,7 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
             preset: preset.id,
             command: undefined,
             args: [],
-            cwd: (this.currentProject.settings || {}).defaultCwd || Settings.data.defaultCwd || undefined,
+            cwd: this.terminalWorkdir(null) || undefined,
             x: Math.round(wx - 280),
             y: Math.round(wy - 180),
             w: 560,
@@ -3674,6 +3463,70 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           if (el) el.innerHTML = max
             ? '<path fill="none" stroke="currentColor" d="M3 4.5h6v6H3z"/><path fill="none" stroke="currentColor" d="M2 7.5V2h5.5"/>'
             : '<path fill="none" stroke="currentColor" d="M2 2h8v8H2z"/>';
+        },
+
+        async applyCanvasFolder(p, folder) {
+          if (!p) return { moved: 0, needsRestart: 0 };
+          const previous = this.canvasFolder(p);
+          const next = folder || '';
+          p.folder = next || undefined;
+          p.settings = p.settings || {};
+          p.settings.defaultCwd = next || undefined;
+          let moved = 0;
+          let needsRestart = 0;
+          for (const t of (p.terminals || [])) {
+            const follows = !t.cwd || (previous && t.cwd === previous);
+            if (!follows) continue;
+            t.cwd = next || undefined;
+            moved++;
+            if (!next) continue;
+            if (['powershell', 'pwsh', 'cmd', 'bash'].includes(t.preset)) {
+              if (!this.ptyMap.has(t.id) || !(await this.cdLiveShellTo(t, next))) {
+                if (this.ptyMap.has(t.id)) needsRestart++;
+              }
+            } else {
+              needsRestart++;
+            }
+          }
+          if (TC) { try { await TC.projects.save(p.id, p); } catch (e) {} }
+          return { moved, needsRestart };
+        },
+
+        promptCanvasFolder(projectId) {
+          if (DEMO || !TC) { this.toast('Canvas folders need the desktop app'); return; }
+          const p = projectId ? this.projects.find(x => x.id === projectId) : this.currentProject;
+          if (!p) return;
+          const isOpen = p === this.currentProject;
+          this.showModal(`
+            <div class="modal-header">
+              <h3>Canvas Folder</h3>
+              <p>Where this canvas' terminals start. Cards that follow the canvas move here; cards with their own folder stay put.</p>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Folder</label>
+              <input class="form-input" id="modal-inp-folder" value="${esc(this.canvasFolder(p))}" placeholder="Home folder" />
+            </div>
+            <div class="modal-actions">
+              <button class="btn btn-secondary" id="modal-btn-browse">Browse…</button>
+              <button class="btn btn-secondary" id="modal-btn-cancel">Cancel</button>
+              <button class="btn btn-primary" id="modal-btn-save">${isOpen ? 'Apply' : 'Save'}</button>
+            </div>
+          `, (dialog) => {
+            dialog.querySelector('#modal-btn-browse').onclick = async () => {
+              const dir = await TC.projects.pickDir('Choose the working folder for this canvas');
+              if (dir) dialog.querySelector('#modal-inp-folder').value = dir;
+            };
+            dialog.querySelector('#modal-btn-cancel').onclick = () => this.closeModal();
+            dialog.querySelector('#modal-btn-save').onclick = async () => {
+              const folder = dialog.querySelector('#modal-inp-folder').value.trim();
+              this.closeModal();
+              const { moved, needsRestart } = await this.applyCanvasFolder(p, folder);
+              this._missingFolders = new Set();
+              if (!folder) this.toast('Canvas folder cleared');
+              else if (needsRestart) this.toast(`${moved} card${moved === 1 ? '' : 's'} retargeted — restart ${needsRestart} session${needsRestart === 1 ? '' : 's'} to move`);
+              else this.toast(moved ? `${moved} terminal${moved === 1 ? '' : 's'} moved to the canvas folder` : 'Canvas folder updated');
+            };
+          });
         },
 
         promptTerminalCwd(item) {
@@ -4067,16 +3920,28 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
               <div><div class="setting-label">Custom CLI locations</div><div class="setting-desc" id="set-clicount">Binaries you located manually.</div></div>
               <button class="btn btn-secondary" id="set-clireset" style="min-width:0">Reset</button>
             </div>
+            <div class="settings-section-title">About</div>
+            <div class="setting-row">
+              <div><div class="setting-label">Canval is open source</div><div class="setting-desc">Source, releases and issue tracker live on GitHub. A star helps other people find it.</div></div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <button class="btn btn-secondary" id="set-github-open" style="min-width:0">Open repo</button>
+                <button class="btn btn-primary" id="set-github-star" style="min-width:0">★ Star on GitHub</button>
+              </div>
+            </div>
             <div class="modal-actions">
               <button class="btn btn-primary" id="modal-btn-close">Done</button>
             </div>
           `, (dialog) => {
             dialog.querySelector('#modal-btn-close').onclick = () => this.closeModal();
+            const ghOpen = dialog.querySelector('#set-github-open');
+            if (ghOpen) ghOpen.onclick = () => openExternal(GITHUB_URL);
+            const ghStarBtn = dialog.querySelector('#set-github-star');
+            if (ghStarBtn) ghStarBtn.onclick = () => openExternal(GITHUB_URL);
             dialog.querySelectorAll('#set-theme-seg .seg-btn').forEach(b => b.onclick = async () => {
               dialog.querySelectorAll('#set-theme-seg .seg-btn').forEach(x => x.classList.toggle('on', x === b));
               await Settings.save({ theme: b.dataset.themeVal });
               Settings.applyTheme();
-              if (this.view === 'canvas') { this.applyCamera(); this.updateMinimap(); }
+              if (this.view === 'canvas') this.applyCamera();
             });
             const markAccentOn = (el) => {
               dialog.querySelectorAll('#set-accent-row .accent-swatch, #set-accent-row .accent-custom').forEach(x => x.classList.toggle('on', x === el));
@@ -4231,8 +4096,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
         },
 
         setupEvents() {
-          this.initMinimap();
-
           if (TC) {
             document.getElementById('cap-min').onclick = () => TC.window.minimize();
             document.getElementById('cap-max').onclick = async () => {
@@ -4365,6 +4228,15 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
             this.toast('Note added');
           };
 
+          const ghIcon = document.getElementById('github-icon-slot');
+          if (ghIcon) ghIcon.innerHTML = Icons.github;
+          const ghStar = document.getElementById('github-star-slot');
+          if (ghStar) ghStar.innerHTML = Icons.star;
+          const ghCta = document.getElementById('btn-github-star');
+          if (ghCta) ghCta.onclick = () => openExternal(GITHUB_URL);
+          const ghLink = document.getElementById('btn-github-link');
+          if (ghLink) ghLink.onclick = () => openExternal(GITHUB_URL);
+
           document.getElementById('fab-plus-slot').innerHTML = Icons.plus;
           document.getElementById('fab-note-slot').innerHTML = Icons.note;
           document.getElementById('fab-cli-slot').innerHTML = Icons.terminal;
@@ -4471,18 +4343,12 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
             this.setWireMode(!document.body.classList.contains('wire-mode-active'));
           };
 
-          const btnMinimapFit = document.getElementById('btn-minimap-fit');
-          if (btnMinimapFit) {
-            btnMinimapFit.onclick = (e) => {
-              e.stopPropagation();
-              this.fitAll();
-            };
-          }
-
           const viewport = document.getElementById('canvas-viewport');
 
+          this.installTermMouseZoomFix();
+
           viewport.onmousedown = (e) => {
-            if (e.target.closest('.canvas-card, .wire-hitbox, .canvas-minimap-container, .wire-del-btn, .wire-flyout, .canvas-fab, .zoom-rail')) return;
+            if (e.target.closest('.canvas-card, .wire-hitbox, .wire-del-btn, .wire-flyout, .canvas-fab, .zoom-rail')) return;
             if (e.button === 1) {
               e.preventDefault();
               this.isPanning = true;
@@ -4496,13 +4362,7 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
               return;
             }
             if (e.button !== 0) {
-              if (this.selectedId || this.selectedIds.length) {
-                this.selectedId = null;
-                this.selectedIds = [];
-                this.renderCards();
-                this.drawWires();
-                this.updateStatusBar();
-              }
+              if (this.selectedId || this.selectedIds.length) this.clearSelection();
               return;
             }
             this._marquee = {
@@ -4518,13 +4378,7 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
             const box = document.getElementById('marquee-box');
             if (box) box.classList.add('hidden');
             if (m && !m.moved && clearOnTap !== false && !m.additive) {
-              if (this.selectedId || (this.selectedIds || []).length) {
-                this.selectedId = null;
-                this.selectedIds = [];
-                this.renderCards();
-                this.drawWires();
-                this.updateStatusBar();
-              }
+              if (this.selectedId || (this.selectedIds || []).length) this.clearSelection();
             }
           };
 
@@ -4541,12 +4395,13 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
               if (n.x < rx1 && n.x + n.w > rx0 && n.y < ry1 && n.y + n.h > ry0) hits.push(n.id);
             }
             const m = this._marquee;
+            const hadWireSelected = typeof this.selectedId === 'string' && this.selectedId.startsWith('wire:');
             const ids = (m && m.additive) ? [...m.base] : [];
             for (const hid of hits) if (!ids.includes(hid)) ids.push(hid);
             this.selectedIds = ids;
             this.selectedId = ids.length ? ids[ids.length - 1] : null;
-            this.renderCards();
-            this.drawWires();
+            this.applySelectionClasses();
+            if (hadWireSelected) this.drawWires();
           };
 
           let panRaf = 0;
@@ -4611,7 +4466,7 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           };
 
           viewport.oncontextmenu = (e) => {
-            if (e.target.closest('.canvas-card, .canvas-minimap-container, .wire-del-btn, .wire-hitbox, .wire-flyout, .canvas-fab')) return;
+            if (e.target.closest('.canvas-card, .wire-del-btn, .wire-hitbox, .wire-flyout, .canvas-fab')) return;
             e.preventDefault();
             const pt = this.screenToWorld(e.clientX, e.clientY);
             this.showCanvasContextMenu(e.clientX, e.clientY, pt);
@@ -4620,16 +4475,19 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           viewport.onwheel = (e) => {
             if (!this.currentProject) return;
             const t = e.target;
-            const overTerm = t && t.closest && t.closest('.xterm-viewport');
-            const overNote = !overTerm && t && t.closest && t.closest('.note-body');
-            if ((overTerm || overNote) && !e.ctrlKey && !e.metaKey) return;
+            const overTerm = t && t.closest && t.closest('.xterm-host');
+            const overNote = t && t.closest && t.closest('.note-body');
+            if ((overTerm || overNote) && !e.ctrlKey && !e.metaKey) {
+              if (overTerm && !(t.closest && t.closest('.xterm'))) this.forwardWheelToTerminal(overTerm, e);
+              return;
+            }
             e.preventDefault();
             const factor = e.deltaY > 0 ? 0.92 : 1.08;
             this.zoomAt(e.clientX, e.clientY, factor);
           };
 
           viewport.ondblclick = (e) => {
-            if (e.target.closest('.canvas-card, .canvas-minimap-container')) return;
+            if (e.target.closest('.canvas-card')) return;
             const pt = this.screenToWorld(e.clientX, e.clientY);
             const n = {
               id: uid(),
@@ -4653,8 +4511,11 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           if (globalSearch) {
             globalSearch.oninput = (e) => {
               this.searchQuery = e.target.value;
-              this.renderCards();
-              this.drawWires();
+              clearTimeout(this._searchT);
+              this._searchT = setTimeout(() => {
+                this.renderCards();
+                this.drawWires();
+              }, 90);
             };
           }
 
@@ -4740,12 +4601,6 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
               updBtn.disabled = false;
             };
             try { if (TC && TC.updater && TC.updater.onStatus) TC.updater.onStatus(updMsg); } catch (_) {}
-
-          window.onresize = () => {
-            if (this.view === 'canvas') {
-              this.updateMinimap();
-            }
-          };
         }
       };
 
