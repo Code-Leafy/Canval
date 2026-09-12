@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const fsp = require('fs/promises');
 const os = require('os');
+const { spawn } = require('child_process');
 
 nativeTheme.themeSource = 'dark';
 if (process.platform === 'win32') {
@@ -491,6 +492,110 @@ ipcMain.handle('pty:which', (_e, probes) => {
     try { out[key] = !!resolveCli(key, cmd); } catch { out[key] = false; }
   }
   return out;
+});
+
+const CLI_INSTALLS = {
+  claude: { label: 'Claude Code', bin: 'npm', args: ['install', '-g', '@anthropic-ai/claude-code'] },
+  gemini: { label: 'Gemini CLI', bin: 'npm', args: ['install', '-g', '@google/gemini-cli'] },
+  codex: { label: 'Codex CLI', bin: 'npm', args: ['install', '-g', '@openai/codex'] },
+  opencode: { label: 'OpenCode', bin: 'npm', args: ['install', '-g', 'opencode-ai'] },
+  cline: { label: 'Cline', bin: 'npm', args: ['install', '-g', 'cline'] },
+  kilo: { label: 'Kilo Code', bin: 'npm', args: ['install', '-g', '@kilocode/cli'] },
+  pwsh: { label: 'PowerShell 7', bin: 'winget', args: ['install', '--id', 'Microsoft.PowerShell', '-e', '--accept-source-agreements', '--accept-package-agreements'] },
+  bash: { label: 'Git for Windows', bin: 'winget', args: ['install', '--id', 'Git.Git', '-e', '--accept-source-agreements', '--accept-package-agreements'] }
+};
+
+function resolveInstaller(bin) {
+  if (!bin) return null;
+  const named = /\.[a-z0-9]+$/i.test(bin)
+    ? [bin]
+    : (process.platform === 'win32' ? [bin + '.exe', bin + '.cmd', bin + '.bat', bin] : [bin]);
+  for (const n of named) {
+    const hit = resolveExe(n);
+    if (hit) return hit;
+  }
+  const dirs = String(process.env.PATH || '').split(path.delimiter).map(cleanDir).filter(Boolean).concat(wellKnownCliDirs());
+  for (const d of dirs) {
+    for (const n of named) {
+      const cand = path.join(d, n);
+      try { fs.lstatSync(cand); return cand; } catch (err) { if (err && err.code === 'EACCES') return cand; }
+    }
+  }
+  return null;
+}
+
+function spawnInstaller(exe, args) {
+  if (/\.(cmd|bat)$/i.test(exe)) {
+    const line = ['"' + exe + '"'].concat(args).join(' ');
+    return spawn(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', '"' + line + '"'], { windowsHide: true, windowsVerbatimArguments: true });
+  }
+  return spawn(exe, args, { windowsHide: true });
+}
+
+function installerCommand(id) {
+  const r = CLI_INSTALLS[id];
+  return r ? [r.bin].concat(r.args).join(' ') : '';
+}
+
+const installsRunning = new Set();
+
+function installProgress(payload) {
+  mainWindow?.webContents.send('cli:install-progress', payload);
+}
+
+ipcMain.handle('cli:recipes', () => {
+  const out = {};
+  for (const [id, r] of Object.entries(CLI_INSTALLS)) out[id] = { label: r.label, command: installerCommand(id) };
+  return out;
+});
+
+ipcMain.handle('cli:install', (_e, preset) => {
+  const recipe = CLI_INSTALLS[preset];
+  if (!recipe) return { ok: false, error: 'No automatic install is available for ' + preset };
+  if (installsRunning.has(preset)) return { ok: false, error: recipe.label + ' is already being installed' };
+  const exe = resolveInstaller(recipe.bin);
+  if (!exe) {
+    const missing = recipe.bin === 'winget' ? 'winget (Install the App Installer from the Microsoft Store)' : recipe.bin + ' (Install Node.js first)';
+    return { ok: false, error: 'Could not find ' + missing };
+  }
+  installsRunning.add(preset);
+  installProgress({ preset, phase: 'start', line: '> ' + installerCommand(preset) });
+  return new Promise((resolve) => {
+    let child;
+    try {
+      child = spawnInstaller(exe, recipe.args);
+    } catch (err) {
+      installsRunning.delete(preset);
+      installProgress({ preset, phase: 'error', line: String(err.message || err) });
+      resolve({ ok: false, error: String(err.message || err) });
+      return;
+    }
+    const push = (buf) => {
+      for (const line of String(buf).split(/\r?\n/)) {
+        if (line.trim()) installProgress({ preset, phase: 'line', line: line.slice(0, 400) });
+      }
+    };
+    child.stdout?.on('data', push);
+    child.stderr?.on('data', push);
+    const timer = setTimeout(() => {
+      try { child.kill(); } catch { }
+      installProgress({ preset, phase: 'error', line: 'Install timed out after 10 minutes' });
+    }, 10 * 60 * 1000);
+    child.on('error', (err) => {
+      clearTimeout(timer);
+      installsRunning.delete(preset);
+      installProgress({ preset, phase: 'error', line: String(err.message || err) });
+      resolve({ ok: false, error: String(err.message || err) });
+    });
+    child.on('close', (code) => {
+      clearTimeout(timer);
+      installsRunning.delete(preset);
+      whichCache.clear();
+      const ok = code === 0;
+      installProgress({ preset, phase: 'done', line: ok ? recipe.label + ' installed' : recipe.label + ' install failed (exit ' + code + ')' });
+      resolve({ ok, code });
+    });
+  });
 });
 
 ipcMain.handle('term:copy', (_e, text) => {

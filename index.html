@@ -399,6 +399,7 @@ body.wire-mode-active .card-port{border-color:var(--accent-hover)}
 .form-select option{background:var(--bg-2)}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin:14px -24px -24px;padding:12px 24px;position:sticky;bottom:-24px;background:rgba(43,43,43,.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--win-divider);border-radius:0 0 8px 8px;z-index:2}
 .modal-actions .btn{flex:1;min-width:0}
+.install-log{max-height:210px;min-height:96px;overflow:auto;margin:0;padding:10px 12px;background:#1b1b1b;border:1px solid var(--win-divider);border-radius:6px;font-family:'Cascadia Mono',Consolas,monospace;font-size:12px;line-height:17px;color:var(--text-2);white-space:pre-wrap;word-break:break-word;text-align:left}
 html[data-theme="light"] .modal-actions{background:rgba(255,255,255,.97)}
 .btn{min-height:32px;min-width:110px;padding:0 16px;border-radius:4px;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .1s;cursor:pointer}
 .btn svg{width:16px;height:16px}
@@ -829,6 +830,12 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
         if (TC && TC.system && TC.system.openExternal) { try { TC.system.openExternal(url); return; } catch (e) {} }
         try { window.open(url, '_blank', 'noopener'); } catch (e) {}
       }
+      const SHELL_PRESETS = new Set(['powershell', 'pwsh', 'cmd', 'bash', 'custom']);
+      function isTuiPreset(preset) { return !SHELL_PRESETS.has(preset); }
+      function useConptyFor(preset) {
+        if (isTuiPreset(preset)) return true;
+        return Settings.data.ptyBackend === 'conpty';
+      }
       const XTerminal = window.Terminal || null;
       const XFitAddon = (window.FitAddon && window.FitAddon.FitAddon) || null;
       const XWebglAddon = (window.WebglAddon && window.WebglAddon.WebglAddon) || null;
@@ -837,14 +844,22 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
       const CLI_INSTALL_HINTS = {
         claude: 'npm i -g @anthropic-ai/claude-code',
         codex: 'npm i -g @openai/codex',
-        cline: 'Install the Cline CLI, then restart the session',
+        cline: 'npm i -g cline',
         opencode: 'npm i -g opencode-ai',
         gemini: 'npm i -g @google/gemini-cli',
-        kilo: 'Install the Kilo Code CLI, then restart the session',
+        kilo: 'npm i -g @kilocode/cli',
         freebuff: 'Install the FreeBuff CLI, then restart the session',
-        pwsh: 'winget install Microsoft.PowerShell',
-        bash: 'Install Git for Windows (includes Bash)'
+        pwsh: 'winget install --id Microsoft.PowerShell -e',
+        bash: 'winget install --id Git.Git -e'
       };
+      let cliRecipes = null;
+      async function cliRecipe(preset) {
+        if (!TC || !TC.cli) return null;
+        if (!cliRecipes) {
+          try { cliRecipes = await TC.cli.recipes(); } catch (e) { cliRecipes = {}; }
+        }
+        return cliRecipes[preset] || null;
+      }
       function presetProbeCmd(preset, command) {
         if (preset === 'custom') return command || null;
         if (preset === 'powershell') return 'powershell.exe';
@@ -870,7 +885,7 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
       const DEFAULT_SETTINGS = {
         theme: 'dark', accent: 'auto',
         renderer: 'auto',
-        ptyBackend: 'winpty',
+        ptyBackend: 'conpty',
         fontSize: 14, fontFamily: 'Cascadia Code', fontWeight: 700, boostContrast: true,
         cursorStyle: 'block', cursorBlink: true, scrollback: 3000,
         defaultPreset: 'powershell', defaultCwd: '',
@@ -1999,7 +2014,7 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
               command: t.command, args: t.args || [],
               cwd: this.terminalWorkdir(t),
               fallbackCwd: this.canvasFolder(),
-              useConpty: Settings.data.ptyBackend === 'conpty',
+              useConpty: useConptyFor(t.preset),
               cols: term.cols, rows: term.rows
             });
             rec._sentCols = term.cols;
@@ -2046,6 +2061,12 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
                 term.writeln(`'${missingProbe || t.preset}' was not found on PATH. Install it, then card menu → Restart session.`);
                 const hint = CLI_INSTALL_HINTS[t.preset];
                 if (hint) term.writeln('Try: ' + hint);
+                if (!t.__installOffered && hint && /^(npm|winget) /.test(hint) && TC && TC.cli) {
+                  t.__installOffered = true;
+                  setTimeout(() => {
+                    if (this.view === 'canvas' && this.currentProject) this.showInstallHelp(t.preset, () => this.respawnPTY(t.id));
+                  }, 700);
+                }
               } else {
                 term.writeln(res.error);
                 term.writeln('Check the working directory and command, then card menu → Restart session. If this persists, delete this card and recreate it after reinstalling the CLI.');
@@ -2125,7 +2146,9 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
             const cam = this.currentProject && this.currentProject.camera;
             const zoom = (cam && cam.zoom) || 1;
             const target = e.target;
-            const hit = target && target.closest ? target.closest('.xterm-screen') : null;
+            const hit = target && target.closest
+              ? (target.closest('.xterm-screen') || (target.closest('.xterm') ? target.closest('.xterm').querySelector('.xterm-screen') : null))
+              : null;
             let screen = null;
             if (e.type === 'mousedown') {
               screen = hit;
@@ -3378,7 +3401,7 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
             try {
               const avail = await cliAvailability();
               if (avail && avail[presetId] === false) {
-                this.showInstallHelp(presetId);
+                this.showInstallHelp(presetId, () => this.createTerminalAt(wx, wy, presetId));
                 return null;
               }
             } catch (e) {}
@@ -3594,14 +3617,15 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
           });
         },
 
-        showInstallHelp(preset) {
+        showInstallHelp(preset, onInstalled) {
           const p = presetById(preset);
           const hint = CLI_INSTALL_HINTS[preset];
           const override = (Settings.data.cliPaths || {})[preset];
+          const canInstall = !!CLI_INSTALL_HINTS[preset] && /^(npm|winget) /.test(hint || '') && !!TC && !!TC.cli;
           this.showModal(`
             <div class="modal-header">
               <h3>${esc(p.name)} was not found</h3>
-              <p>This canvas spawns real processes, and '${esc(presetProbeCmd(preset, null) || preset)}' could not be located. Desktop apps do not inherit shell profile PATH tweaks (version managers, npm globals) — point to the binary directly.</p>
+              <p>This canvas spawns real processes, and '${esc(presetProbeCmd(preset, null) || preset)}' could not be located.${canInstall ? ' Canval can install it for you now.' : ' Desktop apps do not inherit shell profile PATH tweaks (version managers, npm globals) — point to the binary directly.'}</p>
             </div>
             ${hint ? `<div class="form-field"><label class="form-label">Install with</label><input class="form-input" readonly value="${esc(hint)}" onclick="this.select()" /></div>` : ''}
             <div class="form-field">
@@ -3612,10 +3636,13 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
               <button class="btn btn-secondary" id="modal-btn-cancel">Close</button>
               ${override && TC ? '<button class="btn btn-secondary" id="modal-btn-forget">Forget</button>' : ''}
               ${TC ? '<button class="btn btn-secondary" id="modal-btn-locate">Locate…</button>' : ''}
-              ${hint && TC && !hint.startsWith('Install ') ? '<button class="btn btn-primary" id="modal-btn-copy">Copy Command</button>' : ''}
+              ${canInstall ? '<button class="btn btn-secondary" id="modal-btn-copy">Copy Command</button>' : (hint && TC && !hint.startsWith('Install ') ? '<button class="btn btn-secondary" id="modal-btn-copy">Copy Command</button>' : '')}
+              ${canInstall ? '<button class="btn btn-primary" id="modal-btn-install">Install it for me</button>' : ''}
             </div>
           `, (dialog) => {
             dialog.querySelector('#modal-btn-cancel').onclick = () => this.closeModal();
+            const inst = dialog.querySelector('#modal-btn-install');
+            if (inst) inst.onclick = () => this.runCliInstall(preset, onInstalled);
             const cp = dialog.querySelector('#modal-btn-copy');
             if (cp) cp.onclick = async () => {
               await TC.clip.copy(hint);
@@ -3641,6 +3668,107 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
               this.toast('Custom location removed');
             };
           });
+        },
+
+        installRecord(preset) {
+          this._cliInstalls = this._cliInstalls || new Map();
+          let rec = this._cliInstalls.get(preset);
+          if (!rec) { rec = { preset, log: [], running: false, ok: null, error: null, onInstalled: null }; this._cliInstalls.set(preset, rec); }
+          return rec;
+        },
+
+        wireCliInstall() {
+          if (this._cliInstallWired || !TC || !TC.cli || !TC.cli.onInstallProgress) return;
+          this._cliInstallWired = true;
+          TC.cli.onInstallProgress((p) => {
+            if (!p || !p.preset) return;
+            const rec = this.installRecord(p.preset);
+            if (p.line) rec.log.push(p.line);
+            if (rec.log.length > 500) rec.log.splice(0, rec.log.length - 500);
+            if (p.phase === 'done' || p.phase === 'error') this.finishCliInstall(p.preset, p.phase === 'done', p.phase === 'error' ? p.line : null);
+            else this.refreshInstallModal(p.preset);
+          });
+        },
+
+        installCli(preset, onInstalled) {
+          if (DEMO || !TC || !TC.cli) { this.toast('Installers need the desktop app'); return; }
+          this.wireCliInstall();
+          const rec = this.installRecord(preset);
+          if (onInstalled) rec.onInstalled = onInstalled;
+          const p = presetById(preset);
+          if (!rec.running) {
+            rec.running = true;
+            rec.ok = null;
+            rec.error = null;
+            rec.log = ['> ' + (CLI_INSTALL_HINTS[preset] || 'install')];
+            this.toast(`Installing ${p.name}…`);
+            Promise.resolve(TC.cli.install(preset)).then((r) => {
+              if (!r || !r.ok) this.finishCliInstall(preset, false, (r && r.error) || 'installer exited with an error');
+            }).catch((e) => this.finishCliInstall(preset, false, e && e.message));
+          }
+          this.openInstallModal(preset);
+        },
+
+        openInstallModal(preset) {
+          const p = presetById(preset);
+          this._installModalPreset = preset;
+          this.showModal(`
+            <div class="modal-header">
+              <h3>Installing ${esc(p.name)}</h3>
+              <p>${esc(CLI_INSTALL_HINTS[preset] || '')}</p>
+            </div>
+            <div class="form-field">
+              <pre class="install-log" id="install-log"></pre>
+            </div>
+            <div class="modal-actions">
+              <button class="btn btn-secondary" id="modal-btn-cancel">Run in background</button>
+              <button class="btn btn-primary" id="modal-btn-install-done" disabled>Installing…</button>
+            </div>
+          `, (dialog) => {
+            dialog.querySelector('#modal-btn-cancel').onclick = () => { this._installModalPreset = null; this.closeModal(); };
+            const done = dialog.querySelector('#modal-btn-install-done');
+            done.onclick = () => { this._installModalPreset = null; this.closeModal(); };
+            this.refreshInstallModal(preset);
+          });
+        },
+
+        refreshInstallModal(preset) {
+          if (this._installModalPreset !== preset) return;
+          const rec = this.installRecord(preset);
+          const log = document.getElementById('install-log');
+          const done = document.getElementById('modal-btn-install-done');
+          if (log) { log.textContent = rec.log.join('\n'); log.scrollTop = log.scrollHeight; }
+          if (done) {
+            done.disabled = rec.running;
+            done.textContent = rec.running ? 'Installing…' : (rec.ok === false ? 'Close' : 'Done');
+          }
+        },
+
+        finishCliInstall(preset, ok, error) {
+          const rec = this.installRecord(preset);
+          if (!rec.running) return;
+          rec.running = false;
+          rec.ok = ok;
+          rec.error = error || null;
+          const p = presetById(preset);
+          try { cliAvailCache = null; } catch (e) {}
+          if (error) rec.log.push('! ' + error);
+          const cb = rec.onInstalled;
+          rec.onInstalled = null;
+          const verify = ok && !DEMO;
+          Promise.resolve(verify ? cliAvailability() : null).then((avail) => {
+            const live = ok && (!avail || avail[preset] !== false);
+            if (live) {
+              if (cb) return cb();
+              rec.log.push('✓ ' + p.name + ' is installed.');
+              this.toast(`${p.name} installed`);
+            } else if (ok) {
+              rec.log.push('! Installed, but ' + (presetProbeCmd(preset, null) || preset) + ' is not on PATH yet. Restart Canval, then start the session again.');
+              this.toast('Installed — restart Canval to pick it up');
+            } else {
+              this.toast(`Could not install ${p.name}`);
+            }
+          }).then(() => this.refreshInstallModal(preset)).catch(() => {});
         },
 
         async promptChangePreset(item) {
@@ -3853,11 +3981,11 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
             <div class="form-field" style="gap:8px" id="set-pty-list">
               <button class="renderer-opt ${s.ptyBackend !== 'conpty' ? 'on' : ''}" data-pty="winpty">
                 <span class="radio-dot"></span>
-                <span><b>Compatibility — WinPTY (Recommended)</b><span>Reliable keyboard input on every Windows machine.</span></span>
+                <span><b>Legacy — WinPTY</b><span>Last resort for shells with odd keyboard input. It cannot do the alternate screen, so full-screen CLIs cannot scroll or use the mouse.</span></span>
               </button>
               <button class="renderer-opt ${s.ptyBackend === 'conpty' ? 'on' : ''}" data-pty="conpty">
                 <span class="radio-dot"></span>
-                <span><b>Modern — ConPTY</b><span>Sharper passthrough where supported; input can fail on some hosts.</span></span>
+                <span><b>Modern — ConPTY (Recommended)</b><span>Required by full-screen CLI agents: alternate screen, mouse wheel scrolling and bracketed paste. Always used for CLI presets.</span></span>
               </button>
             </div>
             <div class="settings-section-title">Terminal text</div>

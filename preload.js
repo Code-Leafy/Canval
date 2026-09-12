@@ -49,6 +49,15 @@ contextBridge.exposeInMainWorld('tc', {
     copy: (text) => ipcRenderer.invoke('term:copy', text),
     paste: () => ipcRenderer.invoke('term:paste'),
   },
+  cli: {
+    recipes: () => ipcRenderer.invoke('cli:recipes'),
+    install: (preset) => ipcRenderer.invoke('cli:install', preset),
+    onInstallProgress: (fn) => {
+      const l = (_e, p) => fn(p);
+      ipcRenderer.on('cli:install-progress', l);
+      return () => ipcRenderer.removeListener('cli:install-progress', l);
+    },
+  },
   system: {
     accent: () => ipcRenderer.invoke('system:accent'),
     openExternal: (url) => ipcRenderer.invoke('app:openExternal', url),
