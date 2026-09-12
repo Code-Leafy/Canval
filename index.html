@@ -164,11 +164,14 @@ html[data-theme="light"] .search-count{background:rgba(0,0,0,.06)}
 
 .home-view{display:grid;grid-template-columns:300px 1fr;height:100%;background:var(--bg-0)}
 .home-sidebar{background:transparent;padding:8px 12px 12px 12px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
-.sidebar-foot{margin-top:auto;padding:12px 10px 2px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;font-size:11.5px;color:var(--text-3)}
+.sidebar-foot{margin-top:auto;padding:12px 10px 2px;display:flex;flex-direction:column;align-items:stretch;gap:5px;font-size:11.5px;color:var(--text-3);min-width:0}
+.foot-row{display:flex;align-items:center;flex-wrap:wrap;gap:5px;min-width:0;font-size:11.5px;line-height:1.5}
 .link-btn{background:none;border:0;padding:0;font-size:11.5px;color:var(--accent-btn,#4cc2ff);cursor:pointer;text-align:left;font-family:var(--font-body)}
 .link-btn:hover{text-decoration:underline}
 .link-btn:disabled{opacity:.55;cursor:default;text-decoration:none}
-.foot-sep{opacity:.5}
+.foot-sep{opacity:.5;flex:none}
+.foot-sep:has(+ .hidden){display:none}
+.foot-status{line-height:1.45;white-space:normal;overflow-wrap:anywhere;max-width:100%}
 .github-star{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:8px;text-align:left;color:var(--text-1);background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid var(--win-control-stroke);cursor:pointer;transition:background .12s,border-color .12s,transform .12s}
 .github-star:hover{background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.04));border-color:var(--border-strong);transform:translateY(-1px)}
 .github-star-icon svg,.github-star-mark svg{width:18px;height:18px}
@@ -618,12 +621,14 @@ html[data-theme="light"] input[type="checkbox"].switch{background:#9a9a9a}
               <span class="github-star-mark" id="github-star-slot"></span>
             </button>
             <div class="sidebar-foot">
-              <span id="app-version">Canval</span>
-              <span class="foot-sep">·</span>
-              <button class="link-btn" id="btn-github-link" type="button" title="Open the GitHub repository">GitHub</button>
-              <span class="foot-sep">·</span>
-              <button class="link-btn" id="btn-check-updates" type="button">Check for updates</button>
-              <button class="link-btn hidden" id="update-status" type="button"></button>
+              <div class="foot-row">
+                <span id="app-version">Canval</span>
+                <span class="foot-sep">·</span>
+                <button class="link-btn" id="btn-github-link" type="button" title="Open the GitHub repository">GitHub</button>
+                <span class="foot-sep">·</span>
+                <button class="link-btn" id="btn-check-updates" type="button">Check for updates</button>
+              </div>
+              <button class="link-btn foot-status hidden" id="update-status" type="button"></button>
             </div>
 
           </aside>
